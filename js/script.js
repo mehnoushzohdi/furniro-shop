@@ -106,12 +106,14 @@ if (menuToggle && mobileMenu) {
     });
 }
 
-document.addEventListener('click', (event) => {
-    if (
-        mobileMenu.classList.contains('active') &&
-        !mobileMenu.contains(event.target) &&
-        !menuToggle.contains(event.target)
-    ) {
-        mobileMenu.classList.remove('active');
-    }
-});
+if (menuToggle && mobileMenu) {
+    document.addEventListener('click', (event) => {
+        if (
+            mobileMenu.classList.contains('active') &&
+            !mobileMenu.contains(event.target) &&
+            !menuToggle.contains(event.target)
+        ) {
+            mobileMenu.classList.remove('active');
+        }
+    });
+}

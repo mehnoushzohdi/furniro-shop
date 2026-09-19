@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Furniro Shop</title>
-
-    <?php wp_head(); ?>
-</head>
-<body>
-<?php
-include 'header.php';
-?>
+<?php get_header(); ?>
 
 
 <?php
@@ -30,119 +17,25 @@ $range_title = "Browse The Range";
 
 $range_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
-$range_dining_image = get_theme_file_uri('images/range/dining.png');
+$range_categories = get_terms([
+    'taxonomy'   => 'product_cat',
+    'hide_empty' => false,
+    'number'     => 3,
+    'orderby'    => 'count',
+    'order'      => 'DESC',
+]);
 
-$range_dining_name = "Dining";
+$range_categories = is_wp_error($range_categories) ? [] : $range_categories;
 
-$range_living_image = get_theme_file_uri('images/range/living.png');
-
-$range_living_name = "Living";
-
-$range_bedroom_image = get_theme_file_uri('images/range/bedroom.png');
-
-$range_bedroom_name = "Bedroom";
-
-$products_title = "Our Products";
-
-$product1_image = get_theme_file_uri('images/products/product-1.png');
-
-$product1_name = "Syltherine";
-
-$product1_description = "Stylish cafe chair";
-
-$product1_price = "Rp 2.500.000";
-
-$product1_old_price = "Rp 3.500.000";
-
-$product1_discount = "-30%";
-
-$product2_image = get_theme_file_uri('images/products/product-2.png');
-
-$product2_name = "Leviosa";
-
-$product2_description = "Stylish dining chair";
-
-$product2_price = "Rp 3.000.000";
-
-$product2_old_price = "Rp 4.000.000";
-
-$product2_discount = "-25%";
-
-$product3_image = get_theme_file_uri('images/products/product-3.png');
-
-$product3_name = "Lolito";
-
-$product3_description = "Luxury big sofa";
-
-$product3_price = "Rp 7.000.000";
-
-$product3_old_price = "Rp 14.000.000";
-
-$product3_discount = "-50%";
-
-$product4_image = get_theme_file_uri('images/products/product-4.png');
-
-$product4_name = "Respira";
-
-$product4_description = "Outdoor bar table and stool";
-
-$product4_price = "Rp 500.000";
-
-$product4_old_price = "";
-
-$product4_discount = "";
-
-$product5_image = get_theme_file_uri('images/products/product-5.png');
-
-$product5_name = "Grifo";
-
-$product5_description = "Night lamp";
-
-$product5_price = "Rp 1.500.000";
-
-$product5_old_price = "";
-
-$product5_discount = "";
-
-$product6_image = get_theme_file_uri('images/products/product-6.png');
-
-$product6_name = "Muggo";
-
-$product6_description = "Small mug";
-
-$product6_price = "Rp 150.000";
-
-$product6_old_price = "";
-
-$product6_discount = "";
-
-$product7_image = get_theme_file_uri('images/products/product-7.png');
-
-$product7_name = "Pingky";
-
-$product7_description = "Cute bed set";
-
-$product7_price = "Rp 7.000.000";
-
-$product7_old_price = "Rp 14.000.000";
-
-$product7_discount = "-50%";
-
-$product8_image = get_theme_file_uri('images/products/product-8.png');
-
-$product8_name = "Potty";
-
-$product8_description = "Minimalist flower pot";
-
-$product8_price = "Rp 500.000";
-
-$product8_old_price = "";
-
-$product8_discount = "";
+$shop_url = wc_get_page_permalink('shop');
 
 $inspiration_title = "50+ Beautiful Rooms Inspiration";
 
-$inspiration_text = "Our designer already made a lot of beautiful prototype of rooms that inspire you";
+$inspiration_description = "Our designer already made a lot of beautiful prototype of rooms that inspire you";
+
+$inspiration_button = "Explore More";
+
+$products_title = "Our Products";
 
 $inspiration_image = get_theme_file_uri('images/inspiration/Rectangle 24.png');
 
@@ -194,7 +87,7 @@ $share_image_9 = get_theme_file_uri('images/share/Rectangle 45.png');
     <?php echo $hero_text; ?>
 </p>
 
-<a href="#" class="hero__button">
+<a href="<?php echo esc_url($shop_url); ?>" class="hero__button">
     <?php echo $hero_button; ?>
 </a>
     </div>
@@ -214,32 +107,31 @@ $share_image_9 = get_theme_file_uri('images/share/Rectangle 45.png');
 
         <div class="range__items">
 
-            <a href="#" class="range__item">
-                <img
-                    src="<?php echo $range_dining_image; ?>"
-                    alt="Dining furniture"
-                    class="range__image"
-                >
-                <h3 class="range__name"><?php echo $range_dining_name; ?></h3>
-            </a>
+        <?php foreach ($range_categories as $category) : ?>
 
-            <a href="#" class="range__item">
-                <img
-                    src="<?php echo $range_living_image; ?>"
-                    alt="Living room furniture"
-                    class="range__image"
-                >
-                <h3 class="range__name"><?php echo $range_living_name; ?></h3>
-            </a>
+<a
+    href="<?php echo esc_url(get_term_link($category)); ?>"
+    class="range__item"
+>
 
-            <a href="#" class="range__item">
-                <img
-                    src="<?php echo $range_bedroom_image; ?>"
-                    alt="Bedroom furniture"
-                    class="range__image"
-                >
-                <h3 class="range__name"><?php echo $range_bedroom_name; ?></h3>
-            </a>
+    <?php
+    $thumbnail_id = get_term_meta($category->term_id, 'thumbnail_id', true);
+    $category_image = $thumbnail_id ? wp_get_attachment_image_url($thumbnail_id, 'full') : '';
+    ?>
+
+    <img
+        src="<?php echo esc_url($category_image ?: wc_placeholder_img_src('full')); ?>"
+        alt="<?php echo esc_attr($category->name); ?>"
+        class="range__image"
+    >
+
+    <h3 class="range__name">
+        <?php echo esc_html($category->name); ?>
+    </h3>
+
+</a>
+
+<?php endforeach; ?>
 
         </div>
 
@@ -254,192 +146,79 @@ $share_image_9 = get_theme_file_uri('images/share/Rectangle 45.png');
 
         <div class="products__grid">
 
-            <!-- Product 1 -->
-<article class="product-card">
+        <?php
+$home_products = wc_get_products([
+    'limit'  => 8,
+    'status' => 'publish',
+]);
 
-<div class="product-card__image-wrapper">
-    <img src="<?php echo $product1_image; ?>" alt="<?php echo $product1_name; ?>">
+?>
 
-    <span class="product-card__badge product-card__badge--sale">
-        <?php echo $product1_discount; ?>
-    </span>
-</div>
+<?php if ($home_products) : ?>
+<?php foreach ($home_products as $product) : ?>
 
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product1_name; ?></h3>
-                <p class="product-card__description"><?php echo $product1_description; ?></p>
+    <article class="product-card">
 
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product1_price; ?></span>
-                    <span class="product-card__old-price"><?php echo $product1_old_price; ?></span>
-                    </div>
-                </div>
-            </article>
+        <div class="product-card__image-wrapper">
 
+            <img
+                src="<?php echo esc_url(get_the_post_thumbnail_url($product->get_id(), 'full') ?: wc_placeholder_img_src('full')); ?>"
+                alt="<?php echo esc_attr($product->get_name()); ?>"
+            >
 
-            <!-- Product 2 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product2_image; ?>" alt="<?php echo $product2_name; ?>">
-
-                    <div class="product-card__hover">
-                        <button class="product-card__cart" type="button">
-                            Add to cart
-                        </button>
-
-                        <div class="product-card__actions">
-                            <button type="button">
-                                <i class="bi bi-share"></i>
-                                Share
-                            </button>
-
-                            <button type="button">
-                                <i class="bi bi-arrow-left-right"></i>
-                                Compare
-                            </button>
-
-                            <button type="button">
-                                <i class="bi bi-heart"></i>
-                                Like
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product2_name; ?></h3>
-                <p class="product-card__description"><?php echo $product2_description; ?></p>
-
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product2_price; ?></span>
-                    </div>
-                </div>
-            </article>
-
-
-            <!-- Product 3 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product3_image; ?>" alt="<?php echo $product3_name; ?>">
+            <?php if ($product->is_on_sale()) : ?>
                 <span class="product-card__badge product-card__badge--sale">
-    <?php echo $product3_discount; ?>
-</span>
-                </div>
+                    Sale
+                </span>
+            <?php endif; ?>
 
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product3_name; ?></h3>
-                <p class="product-card__description"><?php echo $product3_description; ?></p>
+        </div>
 
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product3_price; ?></span>
-                    <span class="product-card__old-price"><?php echo $product3_old_price; ?></span>
-                    </div>
-                </div>
-            </article>
+        <div class="product-card__content">
 
+            <a href="<?php echo esc_url($product->get_permalink()); ?>">
 
-            <!-- Product 4 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product4_image; ?>" alt="<?php echo $product4_name; ?>">
-                    <span class="product-card__badge product-card__badge--new">New</span>
-                </div>
+                <h3 class="product-card__name">
+                    <?php echo esc_html($product->get_name()); ?>
+                </h3>
 
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product4_name; ?></h3>
-                <p class="product-card__description"><?php echo $product4_description; ?></p>
+            </a>
 
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product4_price; ?></span>
-                    </div>
-                </div>
-            </article>
+            <p class="product-card__description">
+                <?php echo esc_html(wp_strip_all_tags($product->get_short_description())); ?>
+            </p>
 
+            <div class="product-card__price">
 
-            <!-- Product 5 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product5_image; ?>" alt="<?php echo $product5_name; ?>">
-                </div>
+                <span class="product-card__current-price">
+                    <?php echo wc_price($product->get_price()); ?>
+                </span>
 
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product5_name; ?></h3>
-                <p class="product-card__description"><?php echo $product5_description; ?></p>
+                <?php if ($product->is_on_sale()) : ?>
 
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product5_price; ?></span>
-                    </div>
-                </div>
-            </article>
+                    <span class="product-card__old-price">
+                        <?php echo wc_price($product->get_regular_price()); ?>
+                    </span>
 
+                <?php endif; ?>
 
-           <!-- Product 6 -->
-<article class="product-card">
+            </div>
 
-<div class="product-card__image-wrapper">
-    <img src="<?php echo $product6_image; ?>" alt="<?php echo $product6_name; ?>">
-    <span class="product-card__badge product-card__badge--new">New</span>
-</div>
+        </div>
 
-<div class="product-card__content">
-    <h3 class="product-card__name"><?php echo $product6_name; ?></h3>
+    </article>
 
-    <p class="product-card__description">
-        <?php echo $product6_description; ?>
-    </p>
-
-    <div class="product-card__price">
-        <span class="product-card__current-price">
-            <?php echo $product6_price; ?>
-        </span>
-    </div>
-</div>
-
-</article>
-
-
-            <!-- Product 7 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product7_image; ?>" alt="<?php echo $product7_name; ?>">
-                    <span class="product-card__badge product-card__badge--sale">-50%</span>
-                </div>
-
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product7_name; ?></h3>
-                <p class="product-card__description"><?php echo $product7_description; ?></p>
-
-                    <div class="product-card__price">
-                    <span class="product-card__current-price"><?php echo $product7_price; ?></span>
-                    <span class="product-card__old-price"><?php echo $product7_old_price; ?></span>
-                    </div>
-                </div>
-            </article>
-
-
-            <!-- Product 8 -->
-            <article class="product-card">
-                <div class="product-card__image-wrapper">
-                <img src="<?php echo $product8_image; ?>" alt="<?php echo $product8_name; ?>">
-                <span class="product-card__badge product-card__badge--new">New</span>
-                </div>
-
-                <div class="product-card__content">
-                <h3 class="product-card__name"><?php echo $product8_name; ?></h3>
-<p class="product-card__description"><?php echo $product8_description; ?></p>
-
-<div class="product-card__price">
-    <span class="product-card__current-price"><?php echo $product8_price; ?></span>
-</div>
-                </div>
-            </article>
+<?php endforeach; ?>
+<?php else : ?>
+    <p class="products__empty">No products are available yet.</p>
+<?php endif; ?>
 
         </div>
 
         <div class="products__button-wrapper">
-            <button type="button" class="products__button">
-                Show More
-            </button>
+        <a href="<?php echo esc_url($shop_url); ?>" class="products__button">
+            Show More
+        </a>
         </div>
 
     </div>
@@ -458,12 +237,12 @@ $share_image_9 = get_theme_file_uri('images/share/Rectangle 45.png');
 </h2>
 
 <p class="inspiration__description">
-    <?php echo $inspiration_text; ?>
+<?php echo $inspiration_description; ?>
 </p>
 
-            <a href="#" class="inspiration__button">
-                Explore More
-            </a>
+<a href="#" class="inspiration__button">
+    <?php echo $inspiration_button; ?>
+</a>
 
         </div>
 
@@ -647,15 +426,4 @@ $share_image_9 = get_theme_file_uri('images/share/Rectangle 45.png');
 
 </section>
 
-<?php include 'footer.php'; ?>
-
-    <!-- Bootstrap JS -->
-    <script src="js/bootstrap.bundle.min.js"></script>
-
-        
-
-    <!-- Custom JavaScript -->
-    <script src="js/script.js"></script>
-
-</body>
-</html>
+<?php get_footer(); ?>

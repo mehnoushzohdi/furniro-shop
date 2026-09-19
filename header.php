@@ -1,3 +1,13 @@
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+
 <header class="site-header">
     <div class="container-fluid site-header__container">
 
@@ -14,7 +24,7 @@
                 </li>
 
                 <li class="site-header__menu-item">
-                    <a href="#" class="site-header__link">Shop</a>
+                <a href="<?php echo esc_url( home_url('/shop/') ); ?>" class="site-header__link">Shop</a>
                 </li>
 
                 <li class="site-header__menu-item">

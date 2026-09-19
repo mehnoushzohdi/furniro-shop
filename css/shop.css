@@ -164,7 +164,18 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 32px;
 }
+.product-card__content a {
+    text-decoration: none;
+}
 
+.product-card__content a:visited {
+    color: inherit;
+}
+
+.product-card__content a:hover {
+    text-decoration: none;
+    color: inherit;
+}
 
 /* =========================
    PAGINATION
